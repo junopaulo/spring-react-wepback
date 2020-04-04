@@ -1,0 +1,66 @@
+plugins {
+	id "com.github.node-gradle.node" version "2.2.3"
+	id 'org.springframework.boot' version '2.2.6.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'com.juno'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.postgresql:postgresql'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+task start(type: YarnTask) {
+	// add the express package only
+	args = ['watch']
+}
+
+
+node {
+	// Version of Yarn to use.
+	yarnVersion = '1.22.4'
+	
+	version = '12.16.1'
+
+	// Override the install command used by npmInstall
+	npmInstallCommand = 'install'
+
+	// Base URL for fetching node distributions (change if you have a mirror).
+	// Or set to null if you want to add the repository on your own.
+	distBaseUrl = 'https://nodejs.org/dist'
+
+	// If true, it will download node using above parameters.
+	// If false, it will try to use globally installed node.
+	download = true
+
+	// Set the work directory for unpacking node
+	workDir = file("${project.buildDir}/nodejs")
+
+	// Set the work directory for NPM
+	npmWorkDir = file("${project.buildDir}/npm")
+
+	// Set the work directory for Yarn
+	yarnWorkDir = file("${project.buildDir}/yarn")
+
+	// Set the work directory where node_modules should be located
+	nodeModulesDir = file("${project.projectDir}/src/main/resources")
+}
+
